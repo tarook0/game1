@@ -8,9 +8,11 @@ void Game::initVariables()
     
     this->points = 0;
     this->enemySpawnTimerMax = 10.f;
+    this->health = 10.0;
     this->enemySpawnTimer = this->enemySpawnTimerMax;
     this->maxEnemies = 10;
     this->mouseHeld = false;
+    this->endGame = false;
 
 }
 
@@ -53,6 +55,12 @@ const bool Game::running()const {
 	return this->window->isOpen();
 }
 
+
+const bool Game::getEndGame()const {
+    return this->endGame;
+}
+
+
 //Functions
 void Game::pollEvents() {
 
@@ -78,7 +86,7 @@ void Game::spawnEnemy() {
     -   Add enemy to the vector.
     */
     this->enemy.setPosition(
-        static_cast<float>(rand() % static_cast<int>(this->window->getSize().x-enemy.getSize().x)),0.f);
+        static_cast<float>(rand() % static_cast<int>(this->window->getSize().x-this->enemy.getSize().x)),0.f);
     this->enemy.setFillColor(sf::Color::Green);
     //Spawn the enemy 
 
@@ -111,9 +119,18 @@ void Game::render()
 
 void Game::update()
 {
-    this->updateMousePositions();
     this->pollEvents();
-    this->updateEnmies();
+    if (this->endGame==false) {
+
+
+        this->updateMousePositions();
+
+        this->updateEnmies();
+    }
+    //End game condation
+    if (this->health <= 0) {
+        this->endGame = true;
+    }
 }
 
 void Game::updateMousePositions() {
@@ -155,6 +172,8 @@ void Game::updateEnmies() {
         //if the enemy is past the bottom of the screen
         if (this->enemies[i].getPosition().y > this->window->getSize().y) {
             this->enemies.erase(this->enemies.begin() + i);
+            this->health -= 1;
+            std::cout << "Health:" << this->health << "\n";
         }
     
     
@@ -167,14 +186,17 @@ void Game::updateEnmies() {
         {
             this->mouseHeld = true;
             bool deleted = false;
-            for (size_t i = 0; i < enemies.size() && deleted == false; i++)
+            for (size_t i = 0; i < this->enemies.size() && deleted == false; i++)
             {
 
                 if (this->enemies[i].getGlobalBounds().contains(this->mousePosView)) {
                     //Delete the enemy 
                     deleted = true;
+                    this->enemies.erase(this->enemies.begin() + i);
                     //gain points
-                    this->points += 10;
+                    this->points += 1;
+                    std::cout << "point:" << this->points << '\n';
+
                 }
             }
         }

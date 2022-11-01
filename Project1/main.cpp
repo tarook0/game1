@@ -10,7 +10,7 @@ int main()
     //Init game engine
     Game game;
     //Game loop 
-    while (game.running())
+    while (game.running() && !game.getEndGame())
     {
         //update
         game.update();

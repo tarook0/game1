@@ -30,12 +30,13 @@ private:
 
 	
 	//Game logic
+	bool endGame;
 	unsigned points;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
 	int maxEnemies;
 	bool mouseHeld;
-
+	int health;
 
 	//Game objects
 	std::vector<sf::RectangleShape> enemies;
@@ -52,7 +53,7 @@ public:
 	
 	//Accessors
 	const bool running() const;
-	
+	const bool getEndGame() const;
 	
 	//Functions
 	void pollEvents();
