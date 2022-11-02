@@ -25,6 +25,7 @@ void Game::initWindow()
     this->window->setFramerateLimit(60);
 }
 
+
 void Game::initEnmies() {
     this->enemy.setPosition(100,100);
     this->enemy.setSize(sf::Vector2f(100.f, 100.f));
@@ -35,6 +36,17 @@ void Game::initEnmies() {
     
 
 }
+void Game::initFonts() {
+    if (this->font.loadFromFile("Fonts/Dosis-Light.ttf")) {
+        std::cout << "ERROR::Game::INITFaild:: Load Fonts!" << "\n";
+    }
+}
+void Game::initText() {
+    this->uiText.setFont(this->font);
+    this->uiText.setCharacterSize(20);
+    this->uiText.setString("NON");
+    this->uiText.setFillColor(sf::Color::Red);
+}
 
 //Constructors / Distructors
 
@@ -42,6 +54,8 @@ Game::Game()
 {
 	this->initVariables();
 	this->initWindow();
+    this->initText();
+    this->initFonts();
     this->initEnmies();
 }
 Game::~Game()
@@ -50,17 +64,12 @@ Game::~Game()
 
 }
 //Accessors
-
 const bool Game::running()const {
 	return this->window->isOpen();
 }
-
-
 const bool Game::getEndGame()const {
     return this->endGame;
 }
-
-
 //Functions
 void Game::pollEvents() {
 
@@ -93,11 +102,15 @@ void Game::spawnEnemy() {
     this->enemies.push_back(this->enemy);
 }
 
-void Game::renderEnmies() {
+void Game::renderEnmies(sf::RenderTarget& target) {
     for (auto& e : this->enemies) {
-        this->window->draw(e);
+        target.draw(e);
     }
 
+}
+void Game::renderText(sf::RenderTarget& target) 
+{
+    target.draw(this->uiText);
 }
 void Game::render()
 {
@@ -112,18 +125,21 @@ void Game::render()
     this->window->clear();
 
     //Draw game objects
-    this->renderEnmies();
+    this->renderEnmies(*this->window);
+    this->renderText(*this->window);
     this->window->display();
 
 }
+
 
 void Game::update()
 {
     this->pollEvents();
     if (this->endGame==false) {
 
-
         this->updateMousePositions();
+
+        this->updaetText();
 
         this->updateEnmies();
     }
@@ -132,7 +148,6 @@ void Game::update()
         this->endGame = true;
     }
 }
-
 void Game::updateMousePositions() {
 
     this->mousePosWindow = sf::Mouse::getPosition(*this->window);
@@ -204,4 +219,11 @@ void Game::updateEnmies() {
     else {
         this->mouseHeld = false;
     }
+}
+void Game::updaetText() {
+    std::stringstream ss;
+    ss << "Points:" << this->points<<'\n';
+    ss << "Health:" << this->health << '\n';
+
+    this->uiText.setString(ss.str());
 }

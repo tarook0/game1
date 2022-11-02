@@ -1,5 +1,6 @@
 #pragma once
 #include<vector>
+#include <sstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
@@ -23,12 +24,19 @@ private:
 	//Mouse positions
 	sf::Vector2i mousePosWindow;
 	sf::Vector2f mousePosView;
+
+	//Ressources
+	sf::Font font;
+
+	//Text 
+	sf::Text uiText;
+
 	//private function
 	void initVariables();
 	void initWindow();
 	void initEnmies();
-
-	
+	void initFonts();
+	void initText();
 	//Game logic
 	bool endGame;
 	unsigned points;
@@ -57,11 +65,15 @@ public:
 	
 	//Functions
 	void pollEvents();
+	void spawnEnemy();
 	void render();
-	void renderEnmies();
+	void renderEnmies(sf::RenderTarget& target);
+	void renderText(sf::RenderTarget& target);
 	void updateMousePositions();
 	void updateEnmies();
-	void spawnEnemy();
+	void updaetText();
 	void update();
+	
+	
 };
 
