@@ -8,9 +8,9 @@ void Game::initVariables()
     
     this->points = 0;
     this->enemySpawnTimerMax = 10.f;
-    this->health = 10.0;
+    this->health = 20.0;
     this->enemySpawnTimer = this->enemySpawnTimerMax;
-    this->maxEnemies = 10;
+    this->maxEnemies = 4;
     this->mouseHeld = false;
     this->endGame = false;
 
@@ -27,9 +27,8 @@ void Game::initWindow()
 
 
 void Game::initEnmies() {
-    this->enemy.setPosition(100,100);
-    this->enemy.setSize(sf::Vector2f(100.f, 100.f));
-    this->enemy.setScale(sf::Vector2f(0.5f, 0.5f));
+    this->enemy.setPosition(10,10);
+    this->enemy.setSize(sf::Vector2f(10.f, 10.f));
     this->enemy.setFillColor(sf::Color::Cyan);
     //this->enemy.setOutlineColor(sf::Color::Green);
     //this->enemy.setOutlineThickness(1.f);
@@ -89,14 +88,42 @@ void Game::pollEvents() {
 }
 void Game::spawnEnemy() {
     /*
-    spawns enemies and set their color an positions:
+    spawns enemies and set their types colors ,spawn them at random  positions :
     -   sets a random positions .
     -   set a random color.
     -   Add enemy to the vector.
     */
     this->enemy.setPosition(
         static_cast<float>(rand() % static_cast<int>(this->window->getSize().x-this->enemy.getSize().x)),0.f);
-    this->enemy.setFillColor(sf::Color::Green);
+   //Randomize enemy type 
+    int type = rand() % 5;
+    switch (type)
+    {
+    case 0:
+        this->enemy.setFillColor(sf::Color::Magenta);
+        this->enemy.setSize(sf::Vector2f(10.f, 10.f));
+        break;
+    case 1:
+        this->enemy.setFillColor(sf::Color::Blue);
+        this->enemy.setSize(sf::Vector2f(30.f, 30.f));
+        break;
+    case 2:
+        this->enemy.setFillColor(sf::Color::Green);
+        this->enemy.setSize(sf::Vector2f(50.f, 50.f));
+        break;
+    case 3:
+        this->enemy.setFillColor(sf::Color::Red);
+        this->enemy.setSize(sf::Vector2f(70.f, 70.f));
+        break;
+    case 4:
+        this->enemy.setFillColor(sf::Color::White);
+        this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+        break;
+    default:
+        this->enemy.setFillColor(sf::Color::Yellow);
+        this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+        break;
+    }
     //Spawn the enemy 
 
     this->enemies.push_back(this->enemy);
@@ -205,12 +232,22 @@ void Game::updateEnmies() {
             {
 
                 if (this->enemies[i].getGlobalBounds().contains(this->mousePosView)) {
+                    //gain points
+                    if(this->enemies[i].getFillColor()== sf::Color::Magenta)
+                    this->points += 10;
+                    else if (this->enemies[i].getFillColor() == sf::Color::Blue)
+                        this->points += 7;
+                    else if (this->enemies[i].getFillColor() == sf::Color::Green)
+                        this->points += 5;
+                    else if (this->enemies[i].getFillColor() == sf::Color::Red)
+                        this->points += 3;
+                    else if (this->enemies[i].getFillColor() == sf::Color::Yellow)
+                        this->points += 1;
+                    
+                    std::cout << "point:" << this->points << '\n';
                     //Delete the enemy 
                     deleted = true;
                     this->enemies.erase(this->enemies.begin() + i);
-                    //gain points
-                    this->points += 1;
-                    std::cout << "point:" << this->points << '\n';
 
                 }
             }
